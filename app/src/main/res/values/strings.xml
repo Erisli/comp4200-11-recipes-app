@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RecipesApp_G11</string>
+    <string name="favourite_recipe">-Favourite recipe</string>
+    <string name="Todo_List">-Todo List</string>
 </resources>
