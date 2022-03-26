@@ -1,0 +1,34 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color purple_200
+color purple_500
+color purple_700
+color teal_200
+color teal_700
+color white
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+id RecView
+id TextUserName
+id button_login
+id button_user
+id edit_password
+id edit_username
+id favourite
+id linear1
+id linear2
+id textView
+id textView1
+id textView2
+id todoList
+layout activity_main
+layout user_login
+layout user_profile
+layout user_recipeslist
+mipmap ic_launcher
+mipmap ic_launcher_round
+string Todo_List
+string app_name
+string favourite_recipe
+style Theme.Comp420011recipesapp
