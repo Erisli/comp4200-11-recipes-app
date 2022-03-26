@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.comp4200_11_recipes_app">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Comp420011recipesapp">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".UserLogin"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".UserProfile"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".UserRecipesList"
+            android:exported="true">
+        </activity>
+    </application>
+
+</manifest>
