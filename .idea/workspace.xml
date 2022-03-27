@@ -21,6 +21,14 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="resourceFile" />
+        <option value="layoutResourceFile" />
+      </list>
+    </option>
+  </component>
   <component name="ProjectId" id="26vwLcuewcYCpjUOxBChP1hilZS" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />

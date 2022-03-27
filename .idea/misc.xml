@@ -3,9 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Desktop/1/app/src/main/res/drawable/bgdefault.xml" value="0.1" />
+        <entry key="..\:/Desktop/1/app/src/main/res/drawable/bgselected.xml" value="0.1" />
+        <entry key="..\:/Desktop/1/app/src/main/res/drawable/tbselector.xml" value="0.1" />
         <entry key="..\:/Desktop/1/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
+        <entry key="..\:/Desktop/1/app/src/main/res/layout/features_listview.xml" value="0.23369565217391305" />
         <entry key="..\:/Desktop/1/app/src/main/res/layout/user_login.xml" value="0.22826086956521738" />
-        <entry key="..\:/Desktop/1/app/src/main/res/layout/user_profile.xml" value="0.22826086956521738" />
+        <entry key="..\:/Desktop/1/app/src/main/res/layout/user_profile.xml" value="0.264" />
         <entry key="..\:/Desktop/1/app/src/main/res/layout/user_recipeslist.xml" value="0.22826086956521738" />
       </map>
     </option>

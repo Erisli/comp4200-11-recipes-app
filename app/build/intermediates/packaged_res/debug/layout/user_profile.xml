@@ -47,24 +47,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear1">
 
-
-        <TextView
-            android:id="@+id/favourite"
+        <ListView
+            android:id="@+id/listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="20dp"
-            android:textSize="30dp"
-            android:text="@string/favourite_recipe"/>
-
-        <TextView
-            android:id="@+id/todoList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:textSize="30dp"
-            android:text="@string/Todo_List"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

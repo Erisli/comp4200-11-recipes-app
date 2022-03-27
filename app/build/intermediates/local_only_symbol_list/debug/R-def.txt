@@ -1,28 +1,35 @@
 R_DEF: Internal format may change without notice
 local
 color black
+color deepPurple
+color lightPurple
 color purple_200
 color purple_500
 color purple_700
 color teal_200
 color teal_700
 color white
+drawable bgdefault
+drawable bgselected
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable tbselector
 id RecView
 id TextUserName
+id button
 id button_login
 id button_user
 id edit_password
 id edit_username
-id favourite
+id label
 id linear1
 id linear2
+id listview
 id textView
 id textView1
 id textView2
-id todoList
 layout activity_main
+layout features_listview
 layout user_login
 layout user_profile
 layout user_recipeslist
