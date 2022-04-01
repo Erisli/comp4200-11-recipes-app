@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">RecipesApp_G11</string>
+    <string name="recipes_key">523badd0aafd4912917672ba8300ffed</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
