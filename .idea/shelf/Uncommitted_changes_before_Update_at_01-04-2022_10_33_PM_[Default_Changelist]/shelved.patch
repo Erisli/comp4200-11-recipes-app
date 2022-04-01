@@ -1,0 +1,1356 @@
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"purple_200\">#FFBB86FC</color>\r\n    <color name=\"purple_500\">#FF6200EE</color>\r\n    <color name=\"purple_700\">#FF3700B3</color>\r\n    <color name=\"teal_200\">#FF03DAC5</color>\r\n    <color name=\"teal_700\">#FF018786</color>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+--- a/app/src/main/res/values/colors.xml	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/app/src/main/res/values/colors.xml	(date 1648820772472)
+@@ -7,4 +7,5 @@
+     <color name="teal_700">#FF018786</color>
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
++    <color name="btncolour">#93c572</color>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/recipesapp_g11/RecyclerAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/RecyclerAdapter.java b/app/src/main/java/com/example/recipesapp_g11/RecyclerAdapter.java
+new file mode 100644
+--- /dev/null	(date 1648820272905)
++++ b/app/src/main/java/com/example/recipesapp_g11/RecyclerAdapter.java	(date 1648820272905)
+@@ -0,0 +1,126 @@
++package com.example.recipesapp_g11;
++
++import android.content.Context;
++import android.content.Intent;
++import android.graphics.Bitmap;
++import android.graphics.BitmapFactory;
++import android.os.AsyncTask;
++import android.util.Log;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.ImageView;
++import android.widget.TextView;
++
++import androidx.annotation.NonNull;
++import androidx.cardview.widget.CardView;
++import androidx.recyclerview.widget.RecyclerView;
++
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.Serializable;
++import java.net.URL;
++import java.util.ArrayList;
++
++public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ItemViewHolder>{
++    Context context;
++    ArrayList<String> recipeImages;
++    ArrayList<String> recipeTitles;
++    ArrayList<String> recipeDietary;
++    ArrayList<Integer> recipeServings;
++    ArrayList<Integer> recipePreparation;
++
++    RecyclerAdapter(Context context, ArrayList<String> recipeImages, ArrayList<String> recipeTitles, ArrayList<String> recipeDietary, ArrayList<Integer> recipeServings, ArrayList<Integer> recipePreparation ){
++        this.context=context;
++        this.recipeImages=recipeImages;
++        this.recipeTitles=recipeTitles;
++        this.recipeDietary=recipeDietary;
++        this.recipeServings=recipeServings;
++        this.recipePreparation=recipePreparation;
++    }
++
++    @NonNull
++    @Override
++    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
++        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.recipecard_layout, parent, false);
++
++        return new ItemViewHolder(view);
++    }
++
++    @Override
++    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
++        holder.recipeImage.setScaleType(ImageView.ScaleType.FIT_XY);
++        new URLImageToBitmap(holder.recipeImage).execute(recipeImages.get((position)));
++        holder.recipeTitle.setText(recipeTitles.get(position));
++        holder.recipeDiet.setText(recipeDietary.get(position));
++        holder.recipeServing.setText(String.valueOf(recipeServings.get(position))+" Servings");
++        holder.recipeTime.setText(String.valueOf(recipePreparation.get(position))+" Minutes");
++        holder.recipeCard.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                valuessaver.ingarray  = MainActivity.ingradient.get(position);
++                valuessaver.sevinglist=  MainActivity.servingsum.get(position);
++                valuessaver.instructionlist = valuessaver.instruction[position];
++                valuessaver.nutritionlist =valuessaver.nutrition[position];
++                Log.d("recyclersize", String.valueOf(valuessaver.ingarray.length()));
++                Intent intent = new Intent(context, Detailproduct.class);
++                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
++                context.startActivity(intent);
++
++            }
++        });
++    }
++
++    @Override
++    public int getItemCount() {
++        return recipeImages.size();
++    }
++
++    public class ItemViewHolder extends RecyclerView.ViewHolder{
++        CardView recipeCard;
++        ImageView recipeImage;
++        TextView recipeTitle;
++        TextView recipeDiet;
++        TextView recipeTime;
++        TextView recipeServing;
++
++        public ItemViewHolder(@NonNull View itemView) {
++            super(itemView);
++            recipeCard=itemView.findViewById(R.id.recipeCard);
++            recipeImage=itemView.findViewById(R.id.recipeImage);
++            recipeTitle=itemView.findViewById(R.id.recipeTitle);
++            recipeDiet=itemView.findViewById(R.id.dietary);
++            recipeTime=itemView.findViewById(R.id.time);
++            recipeServing=itemView.findViewById(R.id.servings);
++        }
++    }
++
++    public class URLImageToBitmap extends AsyncTask<String, Void, Bitmap> {
++        ImageView recipeImageView;
++
++        URLImageToBitmap(ImageView recipeImageView){
++            this.recipeImageView=recipeImageView;
++        }
++
++        @Override
++        protected Bitmap doInBackground(String... strings) {
++            Bitmap bitmap=null;
++            try {
++                InputStream url = new URL(strings[0]).openStream();
++                bitmap = BitmapFactory.decodeStream(url);
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++            return bitmap;
++        }
++
++        protected void onPostExecute(Bitmap image){
++            recipeImageView.setImageBitmap(image);
++        }
++
++    }
++}
+Index: app/src/main/java/com/example/recipesapp_g11/ingredientfragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/ingredientfragment.java b/app/src/main/java/com/example/recipesapp_g11/ingredientfragment.java
+new file mode 100644
+--- /dev/null	(date 1648784093891)
++++ b/app/src/main/java/com/example/recipesapp_g11/ingredientfragment.java	(date 1648784093891)
+@@ -0,0 +1,71 @@
++package com.example.recipesapp_g11;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++import androidx.recyclerview.widget.LinearLayoutManager;
++import androidx.recyclerview.widget.RecyclerView;
++
++import android.util.Log;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.ArrayList;
++
++
++public class ingredientfragment extends Fragment {
++
++
++    RecyclerView recyclerView;
++    ingradienrecycleradapter adapter;
++    ArrayList<String> namelist=new ArrayList<>();
++    ArrayList<String> vollist=new ArrayList<>();
++    public ingredientfragment() {
++        // Required empty public constructor
++    }
++
++
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        View v = inflater.inflate(R.layout.fragment_ingredientfragment, container, false);
++         recyclerView = v.findViewById(R.id.ingradient_recycclerid);
++        JSONArray jsonArray = valuessaver.ingarray;
++            for(int j = 0; j < jsonArray.length(); j++) {
++
++
++                    JSONObject jsonobject = null;
++                    try {
++                        jsonobject = jsonArray.getJSONObject(j);
++                        String title = jsonobject.getString("name");
++                        namelist.add(title);
++                        String vol = jsonobject.getString("original");
++                        vollist.add(vol);
++                        Log.d("ingradientfrag",title);
++                    } catch (JSONException e) {
++                        e.printStackTrace();
++                    }
++
++
++                }
++            Log.d("fragsize", String.valueOf(namelist.size()));
++        adapter=new ingradienrecycleradapter(getContext(),namelist,vollist);
++        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
++
++        recyclerView.setAdapter(adapter);
++        return v;
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_ingredientfragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_ingredientfragment.xml b/app/src/main/res/layout/fragment_ingredientfragment.xml
+new file mode 100644
+--- /dev/null	(date 1648746209795)
++++ b/app/src/main/res/layout/fragment_ingredientfragment.xml	(date 1648746209795)
+@@ -0,0 +1,15 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".ingredientfragment">
++
++    <!-- TODO: Update blank fragment layout -->
++    <androidx.recyclerview.widget.RecyclerView
++        android:id="@+id/ingradient_recycclerid"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:text="@string/hello_blank_fragment" />
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_detailproduct.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_detailproduct.xml b/app/src/main/res/layout/activity_detailproduct.xml
+new file mode 100644
+--- /dev/null	(date 1648830006644)
++++ b/app/src/main/res/layout/activity_detailproduct.xml	(date 1648830006644)
+@@ -0,0 +1,85 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".Detailproduct">
++    <RelativeLayout
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content">
++        <LinearLayout
++            android:id="@+id/fragchooseridly"
++            android:layout_width="match_parent"
++            android:layout_height="35dp"
++
++            android:orientation="horizontal">
++            <LinearLayout
++                android:id="@+id/ly1"
++                android:background="@color/purple_700"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content">
++                <Button
++                    android:backgroundTint="@color/btncolour"
++                    android:id="@+id/ingradientbtnid"
++                    android:layout_marginStart="02dp"
++                    android:layout_width="wrap_content"
++                    android:textSize="10sp"
++                    android:layout_height="wrap_content"
++                    android:text="Ingredients"/>
++            </LinearLayout>
++           <LinearLayout
++               android:background="@color/purple_700"
++               android:id="@+id/ly2"
++               android:layout_width="wrap_content"
++               android:layout_height="wrap_content">
++               <Button
++                   android:backgroundTint="@color/btncolour"
++                   android:id="@+id/directionbtnid"
++                   android:layout_marginStart="05dp"
++                   android:textSize="10sp"
++                   android:layout_width="wrap_content"
++                   android:layout_height="wrap_content"
++                   android:text="Direction"/>
++           </LinearLayout>
++            <LinearLayout
++                android:background="@color/purple_700"
++                android:id="@+id/ly3"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content">
++                <Button
++                    android:backgroundTint="@color/btncolour"
++                    android:id="@+id/nutritionbtnid"
++                    android:layout_marginStart="05dp"
++                    android:textSize="10sp"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="Nutrition"/>
++            </LinearLayout>
++           <LinearLayout
++               android:background="@color/purple_700"
++               android:id="@+id/ly4"
++               android:layout_width="wrap_content"
++               android:layout_height="wrap_content">
++               <Button
++                   android:backgroundTint="@color/btncolour"
++                   android:id="@+id/servingbtnid"
++                   android:layout_marginEnd="02dp"
++                   android:layout_marginStart="05dp"
++                   android:textSize="10sp"
++                   android:layout_width="wrap_content"
++                   android:layout_height="wrap_content"
++                   android:text="Serving"/>
++           </LinearLayout>
++
++        </LinearLayout>
++        <FrameLayout
++            android:layout_marginTop="10dp"
++            android:id="@+id/detailefragment_id"
++            android:layout_below="@+id/fragchooseridly"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"/>
++    </RelativeLayout>
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n}\r\n\r\nandroid {\r\n    compileSdk 31\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.recipesapp_g11\"\r\n        minSdk 21\r\n        targetSdk 31\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.4.1'\r\n    implementation 'com.google.android.material:material:1.5.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/app/build.gradle	(date 1648745980333)
+@@ -32,6 +32,8 @@
+     implementation 'androidx.appcompat:appcompat:1.4.1'
+     implementation 'com.google.android.material:material:1.5.0'
+     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
++    implementation 'com.android.volley:volley:1.2.1'
++    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+     testImplementation 'junit:junit:4.13.2'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+Index: app/src/main/java/com/example/recipesapp_g11/Detailproduct.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/Detailproduct.java b/app/src/main/java/com/example/recipesapp_g11/Detailproduct.java
+new file mode 100644
+--- /dev/null	(date 1648829894773)
++++ b/app/src/main/java/com/example/recipesapp_g11/Detailproduct.java	(date 1648829894773)
+@@ -0,0 +1,108 @@
++package com.example.recipesapp_g11;
++
++import androidx.appcompat.app.AppCompatActivity;
++import androidx.core.content.ContextCompat;
++import androidx.fragment.app.Fragment;
++import androidx.fragment.app.FragmentManager;
++
++import android.annotation.SuppressLint;
++import android.content.Intent;
++import android.graphics.PorterDuff;
++import android.os.Bundle;
++import android.view.View;
++import android.widget.Button;
++import android.widget.LinearLayout;
++
++public class Detailproduct extends AppCompatActivity {
++    Button serving , ingradient , direction , nutrition;
++    LinearLayout A,B,C,D;
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++
++
++        setContentView(R.layout.activity_detailproduct);
++        serving = findViewById(R.id.servingbtnid);
++        direction = findViewById(R.id.directionbtnid);
++        nutrition = findViewById(R.id.nutritionbtnid);
++        ingradient = findViewById(R.id.ingradientbtnid);
++        A =findViewById(R.id.ly1);
++        B =findViewById(R.id.ly2);
++        C =findViewById(R.id.ly3);
++        D =findViewById(R.id.ly4);
++        Fragment fragment = new ingredientfragment();
++        FragmentManager fragmentManager = getSupportFragmentManager();
++        fragmentManager.beginTransaction().replace(R.id.detailefragment_id, fragment).commitAllowingStateLoss();
++        A.setBackgroundColor(getResources().getColor(R.color.white));
++       serving.setOnClickListener(new View.OnClickListener() {
++
++
++
++           public void onClick(View v) {
++               changecolur();
++               Fragment fragment = new servingfragment();
++               FragmentManager fragmentManager = getSupportFragmentManager();
++               fragmentManager.beginTransaction().replace(R.id.detailefragment_id, fragment).commitAllowingStateLoss();
++
++
++               D.setBackgroundColor(getResources().getColor(R.color.white));
++
++           }
++       });
++        direction.setOnClickListener(new View.OnClickListener() {
++
++            @Override
++            public void onClick(View v) {
++                changecolur();
++                Fragment fragment = new instruction();
++                FragmentManager fragmentManager = getSupportFragmentManager();
++                fragmentManager.beginTransaction().replace(R.id.detailefragment_id, fragment).commitAllowingStateLoss();
++                B.setBackgroundColor(getResources().getColor(R.color.white));
++
++            }
++
++        });
++        ingradient.setOnClickListener(new View.OnClickListener() {
++
++            @Override
++            public void onClick(View v) {
++                changecolur();
++                Fragment fragment = new ingredientfragment();
++                FragmentManager fragmentManager = getSupportFragmentManager();
++                fragmentManager.beginTransaction().replace(R.id.detailefragment_id, fragment).commitAllowingStateLoss();
++                A.setBackgroundColor(getResources().getColor(R.color.white));
++            }
++        });
++        nutrition.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                changecolur();
++                Fragment fragment = new Nutritionfragment();
++                FragmentManager fragmentManager = getSupportFragmentManager();
++                fragmentManager.beginTransaction().replace(R.id.detailefragment_id, fragment).commitAllowingStateLoss();
++                C.setBackgroundColor(getResources().getColor(R.color.white));
++
++            }
++        });
++    }
++
++    private void changecolur()
++    {
++        A.setBackgroundColor(getResources().getColor(R.color.purple_700));
++        B.setBackgroundColor(getResources().getColor(R.color.purple_700));
++        C.setBackgroundColor(getResources().getColor(R.color.purple_700));
++        D.setBackgroundColor(getResources().getColor(R.color.purple_700));
++
++
++    }
++
++
++    @Override
++    public void onBackPressed() {
++        super.onBackPressed();
++        Intent intent = new Intent(this, MainActivity.class);
++
++        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
++        startActivity(intent);
++    }
++}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.recipesapp_g11\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.RecipesApp_G11\">\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/app/src/main/AndroidManifest.xml	(date 1648744523391)
+@@ -2,6 +2,8 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="com.example.recipesapp_g11">
+ 
++    <uses-permission android:name="android.permission.INTERNET" />
++
+     <application
+         android:allowBackup="true"
+         android:icon="@mipmap/ic_launcher"
+@@ -9,6 +11,9 @@
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.RecipesApp_G11">
++        <activity
++            android:name=".Detailproduct"
++            android:exported="false" />
+         <activity
+             android:name=".MainActivity"
+             android:exported="true">
+Index: app/src/main/java/com/example/recipesapp_g11/valuessaver.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/valuessaver.java b/app/src/main/java/com/example/recipesapp_g11/valuessaver.java
+new file mode 100644
+--- /dev/null	(date 1648820284515)
++++ b/app/src/main/java/com/example/recipesapp_g11/valuessaver.java	(date 1648820284515)
+@@ -0,0 +1,35 @@
++package com.example.recipesapp_g11;
++
++import org.json.JSONArray;
++
++import java.util.ArrayList;
++
++public class valuessaver {
++    public static String imgurl , tittle ,sevinglist,instructionlist,nutritionlist;
++    public static JSONArray ingarray;
++    public static String[] instruction = {"Cooking Instruction Summary:\n" +
++            "wash and rinse pork chops and place into the skillet.cut them into bite sized pieces and add half of the Basil Garlic simmer sauce.boil your water and start working on cooking your bow-tie pasta.when you have finished with boiling and draining your pasta, add it to the pork along with the rest of the Basil Garlic Simmering Sauce, mixing lightly.Next you will top with the Chunky Bruschetta Finishing Sauce, cover with Parmesan, and cover. Cooking on low heat 2 to 3 minutes or until heated through.\n" +
++            "\n" +
++            " \n" +
++            "\n" +
++            "Step By Step:\n" +
++            "\n" +
++            "1. wash and rinse pork chops and place into the skillet.cut them into bite sized pieces and add half of the Basil Garlic simmer sauce.boil your water and start working on cooking your bow-tie pasta.when you have finished with boiling and draining your pasta, add it to the pork along with the rest of the Basil Garlic Simmering Sauce, mixing lightly.Next you will top with the Chunky Bruschetta Finishing Sauce, cover with Parmesan, and cover. Cooking on low heat 2 to 3 minutes or until heated through." ,
++            "In a large skillet, melt butter over medium heat until foamy. Then add bread crumbs, tossing to coat in butter, until toasted and lightly browned. Remove from pan into small bowl; mix in cheese and about a tablespoon of the green scallion tops.\n" +
++                    "In the meantime, begin to prepare your pasta according to the directions on the package. While the pasta is cooking, put about a tablespoon of olive oil in the same pan you used for the bread crumbs. Over medium heat, add the garlic, whites of the scallions, and cauliflower to the skillet. Saute until the cauliflower shows some caramelization. Then add the wine until the florets are tender-crisp. Add salt, pepper, and red pepper flakes.\n" +
++                    "When pasta is just shy of al dente, reserve about a cup of the cooking water and drain the pasta. Add the drained pasta to the skillet—still over medium heat—with the veggies and toss with some pasta water, as necessary (I added a little at a time; I ended up using about 1/2 cup), till the pasta is coated and turns easily. You may want to add another little drizzle of olive oil. Again, taste and season accordingly"};
++
++
++
++
++    public static String[] nutrition ={"521k Calories\n" +
++            "35g Protein\n" +
++            "10g Total Fat\n" +
++            "69g Carbs\n" +
++            "20% Score",
++            "•584k Calories\n" +
++            "•18g Protein\n" +
++            "•19g Total Fat\n" +
++            "•83g Carbs\n" +
++            "•19% Health Score"};
++}
+Index: app/src/main/res/drawable/buttonnotselect.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/buttonnotselect.xml b/app/src/main/res/drawable/buttonnotselect.xml
+new file mode 100644
+--- /dev/null	(date 1648825124623)
++++ b/app/src/main/res/drawable/buttonnotselect.xml	(date 1648825124623)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="utf-8"?>
++<shape xmlns:android="http://schemas.android.com/apk/res/android">
++    <stroke android:width="0dp" android:color="@color/white" />
++    <solid android:color="#FF3700B3"/>
++    <padding android:left="2dp" android:top="2dp"
++        android:right="2dp" android:bottom="2dp" />
++    <corners android:radius="5dp" />
++</shape>
+\ No newline at end of file
+Index: app/src/main/java/com/example/recipesapp_g11/instruction.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/instruction.java b/app/src/main/java/com/example/recipesapp_g11/instruction.java
+new file mode 100644
+--- /dev/null	(date 1648819045294)
++++ b/app/src/main/java/com/example/recipesapp_g11/instruction.java	(date 1648819045294)
+@@ -0,0 +1,36 @@
++package com.example.recipesapp_g11;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++import androidx.recyclerview.widget.RecyclerView;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.TextView;
++
++
++public class instruction extends Fragment {
++
++    TextView textView;
++
++    public instruction() {
++        // Required empty public constructor
++    }
++
++
++
++
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate return
++                View v =inflater.inflate(R.layout.fragment_instruction, container, false);
++                textView = v.findViewById(R.id.instructuiontxt_id);
++                textView.setText(valuessaver.instructionlist);
++       return v;
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_bowl_food_solid.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_bowl_food_solid.xml b/app/src/main/res/drawable/ic_bowl_food_solid.xml
+new file mode 100644
+--- /dev/null	(date 1648526378000)
++++ b/app/src/main/res/drawable/ic_bowl_food_solid.xml	(date 1648526378000)
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="576dp"
++    android:height="512dp"
++    android:viewportWidth="576"
++    android:viewportHeight="512">
++  <path
++      android:fillColor="#FFFFFF"
++      android:pathData="M96,128C96.53,128 97.07,128 97.6,128C105,91.49 137.3,64 176,64C190.1,64 204.1,68.1 216.9,75.25C230.2,49.55 257.1,32 288,32C318.9,32 345.8,49.56 359.1,75.25C371,68.1 385,64 400,64C438.7,64 470.1,91.49 478.4,128C478.9,128 479.5,128 480,128C515.3,128 544,156.7 544,192C544,203.7 540.9,214.6 535.4,224H40.56C35.12,214.6 32,203.7 32,192C32,156.7 60.65,128 96,128H96zM16,283.4C16,268.3 28.28,256 43.43,256H532.6C547.7,256 560,268.3 560,283.4C560,356.3 512.6,418.2 446.9,439.8C447.6,442.4 448,445.2 448,448C448,465.7 433.7,480 416,480H160C142.3,480 128,465.7 128,448C128,445.2 128.4,442.4 129.1,439.8C63.4,418.2 16,356.3 16,283.4H16z"/>
++</vector>
+Index: app/src/main/java/com/example/recipesapp_g11/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.recipesapp_g11;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.os.Bundle;\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/MainActivity.java b/app/src/main/java/com/example/recipesapp_g11/MainActivity.java
+--- a/app/src/main/java/com/example/recipesapp_g11/MainActivity.java	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/app/src/main/java/com/example/recipesapp_g11/MainActivity.java	(date 1648790393506)
+@@ -4,11 +4,104 @@
+ 
+ import android.os.Bundle;
+ 
++import androidx.appcompat.app.AppCompatActivity;
++import androidx.recyclerview.widget.LinearLayoutManager;
++import androidx.recyclerview.widget.RecyclerView;
++import android.util.Log;
++import com.android.volley.Request;
++import com.android.volley.RequestQueue;
++import com.android.volley.Response;
++import com.android.volley.VolleyError;
++import com.android.volley.toolbox.JsonArrayRequest;
++import com.android.volley.toolbox.Volley;
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++import java.util.ArrayList;
++
++
+ public class MainActivity extends AppCompatActivity {
+ 
++    RecyclerView recycler;
++    RecyclerAdapter adapter;
++    ArrayList<String> recipeImages=new ArrayList<>();
++   public static ArrayList<String> servingsum=new ArrayList<>();
++    ArrayList<String> recipeTitles=new ArrayList<>();
++    ArrayList<String> recipeDietary=new ArrayList<>();
++    ArrayList<Integer> recipeServings=new ArrayList<>();
++    ArrayList<Integer> recipePreparation = new ArrayList<>();
++   public static  ArrayList<JSONArray> ingradient = new ArrayList<>();
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
++        final String key=getResources().getString(R.string.recipes_key);
++        recycler=findViewById(R.id.recyclerView);
++        RequestQueue queue= Volley.newRequestQueue(this);
++        String url="https://api.spoonacular.com/recipes/informationBulk?ids=715538,716429&apiKey="+key;
++        JsonArrayRequest request= new JsonArrayRequest(Request.Method.GET, url, null,
++                new Response.Listener<JSONArray>() {
++                    @Override
++                    public void onResponse(JSONArray response) {
++                        try {
++                            if(ingradient!=null){
++                                ingradient.clear();
++                            }
++                            for(int i=0;i< response.length();i++){
++                                JSONObject recipe = response.getJSONObject(i);
++                                Log.d("responceapi",""+recipe);
++                                JSONArray jsonArray = recipe.getJSONArray("extendedIngredients");
++                                ingradient.add(jsonArray);
++                                recipeTitles.add(recipe.getString("title"));
++                                recipeImages.add(recipe.getString("image"));
++                                recipeServings.add(recipe.getInt("servings"));
++                                recipePreparation.add(recipe.getInt("readyInMinutes"));
++                                String dietary = getDietaryInfo(recipe);
++                               servingsum.add(recipe.getString("summary"));
++                                recipeDietary.add(dietary);
++                            }
++                            Log.d("itemCount:",String.valueOf(recipeTitles.size()));
++                            adapter=new RecyclerAdapter(MainActivity.this,recipeImages,recipeTitles,recipeDietary,recipeServings,recipePreparation);
++                            recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
++                            recycler.setAdapter(adapter);
++                        } catch (JSONException e) {
++                            e.printStackTrace();
++                            Log.d("error2",""+e);
++                        }
++                    }
++                }, new Response.ErrorListener() {
++            @Override
++            public void onErrorResponse(VolleyError error) {
++              Log.d("errorvoly",""+error);
++            }
++        });
++
++        queue.add(request);
++
++    }
++
++    public String getDietaryInfo(JSONObject recipe) throws JSONException {
++        String dietary="";
++        if (recipe.getBoolean("vegetarian")) {
++            dietary = "vegetarian: yes";
++        }else{
++            dietary = "vegetarian: no";
++        }
++        if (recipe.getBoolean("vegan")) {
++            dietary += ", vegan: yes";
++        }else{
++            dietary += ", vegan: no";
++        }
++        if (recipe.getBoolean("glutenFree")) {
++            dietary += ", gluten free: yes";
++        }else{
++            dietary += ", gluten free: no";
++        }
++        if (recipe.getBoolean("dairyFree")) {
++            dietary += ", dairy free:yes";
++        }else{
++            dietary += ", dairy free:no";
++        }
++        return dietary;
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/res/layout/recipecard_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/recipecard_layout.xml b/app/src/main/res/layout/recipecard_layout.xml
+new file mode 100644
+--- /dev/null	(date 1648745259591)
++++ b/app/src/main/res/layout/recipecard_layout.xml	(date 1648745259591)
+@@ -0,0 +1,119 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content">
++
++    <androidx.cardview.widget.CardView
++        android:id="@+id/recipeCard"
++        android:layout_width="415dp"
++        android:layout_height="wrap_content"
++        android:layout_marginStart="20dp"
++        android:layout_marginTop="5dp"
++        android:layout_marginEnd="20dp"
++        android:paddingTop="15dp"
++        android:paddingBottom="15dp"
++        app:cardBackgroundColor="@color/black"
++        app:cardCornerRadius="10dp"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent">
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal">
++
++            <ImageView
++                android:id="@+id/recipeImage"
++                android:layout_width="280dp"
++                android:layout_height="match_parent"
++                android:layout_gravity="center"
++                android:layout_weight="1"
++                app:srcCompat="@drawable/ic_launcher_background" />
++
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_weight="1"
++                android:orientation="vertical"
++                android:paddingLeft="15dp"
++                android:paddingRight="15dp">
++
++                <TextView
++                    android:id="@+id/recipeTitle"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:fontFamily="sans-serif-smallcaps"
++                    android:gravity="center"
++                    android:paddingTop="10dp"
++                    android:paddingBottom="10dp"
++                    android:text="TextView"
++                    android:textColor="@color/white"
++                    android:textSize="20sp" />
++
++                <TextView
++                    android:id="@+id/dietary"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:fontFamily="sans-serif-smallcaps"
++                    android:gravity="center"
++                    android:paddingTop="5dp"
++                    android:paddingBottom="10dp"
++                    android:text="TextView"
++                    android:textColor="@color/white"
++                    android:textSize="16sp" />
++
++                <LinearLayout
++                    android:visibility="gone"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:orientation="horizontal"
++                    android:paddingTop="10dp"
++                    android:paddingBottom="10dp">
++
++                    <ImageView
++                        android:id="@+id/servingsImage"
++                        android:layout_width="10dp"
++                        android:layout_height="30dp"
++                        android:layout_weight="1"
++                        app:srcCompat="@drawable/ic_bowl_food_solid" />
++
++                    <TextView
++                        android:id="@+id/servings"
++                        android:layout_width="wrap_content"
++                        android:layout_height="wrap_content"
++                        android:layout_marginStart="5dp"
++                        android:layout_marginTop="5dp"
++                        android:layout_weight="1"
++                        android:fontFamily="sans-serif-smallcaps"
++                        android:text="TextView"
++                        android:textColor="@color/white"
++                        android:textSize="20sp" />
++
++                    <ImageView
++                        android:id="@+id/timeImage"
++                        android:layout_width="10dp"
++                        android:layout_height="30dp"
++                        android:layout_weight="1"
++                        app:srcCompat="@drawable/ic_clock_solid" />
++
++                    <TextView
++                        android:visibility="gone"
++                        android:id="@+id/time"
++                        android:layout_width="wrap_content"
++                        android:layout_height="wrap_content"
++                        android:layout_marginStart="5dp"
++                        android:layout_marginTop="5dp"
++                        android:layout_weight="1"
++                        android:fontFamily="sans-serif-smallcaps"
++                        android:text="TextView"
++                        android:textColor="@color/white"
++                        android:textSize="20sp" />
++                </LinearLayout>
++
++            </LinearLayout>
++        </LinearLayout>
++    </androidx.cardview.widget.CardView>
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_servingfragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_servingfragment.xml b/app/src/main/res/layout/fragment_servingfragment.xml
+new file mode 100644
+--- /dev/null	(date 1648822420564)
++++ b/app/src/main/res/layout/fragment_servingfragment.xml	(date 1648822420564)
+@@ -0,0 +1,30 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".servingfragment">
++<RelativeLayout
++    android:layout_width="wrap_content"
++    android:layout_height="wrap_content">
++    <ScrollView
++
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        >
++        <TextView
++           android:paddingBottom="80dp"
++            android:layout_margin="20dp"
++            android:textSize="18sp"
++            android:textStyle="bold"
++            android:id="@+id/summarryidtxt"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:text="@string/hello_blank_fragment" />
++
++    </ScrollView>
++</RelativeLayout>
++    <!-- TODO: Update blank fragment layout -->
++
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".MainActivity\">\r\n\r\n    <TextView\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Hello World!\"\r\n        android:layout_marginBottom=\"1dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintLeft_toLeftOf=\"parent\"\r\n        app:layout_constraintRight_toRightOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1648567829519)
+@@ -6,14 +6,18 @@
+     android:layout_height="match_parent"
+     tools:context=".MainActivity">
+ 
+-    <TextView
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="Hello World!"
+-        android:layout_marginBottom="1dp"
++    <androidx.recyclerview.widget.RecyclerView
++
++        android:id="@+id/recyclerView"
++        android:layout_width="0dp"
++        android:layout_height="0dp"
++        android:layout_marginStart="1dp"
++        android:layout_marginTop="1dp"
++        android:layout_marginEnd="1dp"
++        android:layout_marginBottom="3dp"
+         app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintLeft_toLeftOf="parent"
+-        app:layout_constraintRight_toRightOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
+-
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        tools:listitem="@layout/recipecard_layout" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/recipesapp_g11/servingfragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/servingfragment.java b/app/src/main/java/com/example/recipesapp_g11/servingfragment.java
+new file mode 100644
+--- /dev/null	(date 1648790393480)
++++ b/app/src/main/java/com/example/recipesapp_g11/servingfragment.java	(date 1648790393480)
+@@ -0,0 +1,37 @@
++package com.example.recipesapp_g11;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.TextView;
++
++
++public class servingfragment extends Fragment {
++
++
++
++    public servingfragment() {
++        // Required empty public constructor
++    }
++
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++         View v =inflater.inflate(R.layout.fragment_servingfragment, container, false);
++        TextView s = v.findViewById(R.id.summarryidtxt);
++        s.setText(valuessaver.sevinglist);
++        return v;
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_nutritionfragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_nutritionfragment.xml b/app/src/main/res/layout/fragment_nutritionfragment.xml
+new file mode 100644
+--- /dev/null	(date 1648820403305)
++++ b/app/src/main/res/layout/fragment_nutritionfragment.xml	(date 1648820403305)
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".Nutritionfragment">
++
++    <!-- TODO: Update blank fragment layout -->
++    <TextView
++        android:textSize="18sp"
++        android:textColor="@color/black"
++        android:layout_margin="20dp"
++        android:id="@+id/nutritiontexttext_id"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:text="@string/hello_blank_fragment" />
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_clock_solid.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_clock_solid.xml b/app/src/main/res/drawable/ic_clock_solid.xml
+new file mode 100644
+--- /dev/null	(date 1648526378000)
++++ b/app/src/main/res/drawable/ic_clock_solid.xml	(date 1648526378000)
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="512dp"
++    android:height="512dp"
++    android:viewportWidth="512"
++    android:viewportHeight="512">
++  <path
++      android:fillColor="#FFFFFF"
++      android:pathData="M256,512C114.6,512 0,397.4 0,256C0,114.6 114.6,0 256,0C397.4,0 512,114.6 512,256C512,397.4 397.4,512 256,512zM232,256C232,264 236,271.5 242.7,275.1L338.7,339.1C349.7,347.3 364.6,344.3 371.1,333.3C379.3,322.3 376.3,307.4 365.3,300L280,243.2V120C280,106.7 269.3,96 255.1,96C242.7,96 231.1,106.7 231.1,120L232,256z"/>
++</vector>
+Index: app/src/main/java/com/example/recipesapp_g11/ingradienrecycleradapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/ingradienrecycleradapter.java b/app/src/main/java/com/example/recipesapp_g11/ingradienrecycleradapter.java
+new file mode 100644
+--- /dev/null	(date 1648748558703)
++++ b/app/src/main/java/com/example/recipesapp_g11/ingradienrecycleradapter.java	(date 1648748558703)
+@@ -0,0 +1,60 @@
++package com.example.recipesapp_g11;
++
++import android.content.Context;
++import android.util.Log;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.ImageView;
++import android.widget.TextView;
++
++import androidx.annotation.NonNull;
++import androidx.cardview.widget.CardView;
++import androidx.recyclerview.widget.RecyclerView;
++
++import java.util.ArrayList;
++
++public class ingradienrecycleradapter extends RecyclerView.Adapter<ingradienrecycleradapter.ItemViewHolder>{
++    Context context;
++    ArrayList<String> namelist;
++    ArrayList<String> vollist;
++    ingradienrecycleradapter(Context context, ArrayList<String> namelist, ArrayList<String> vollist){
++        this.context=context;
++        this.namelist=namelist;
++        this.vollist=vollist;
++
++    }
++
++    @NonNull
++    @Override
++    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
++        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.ingradientitem_layout, parent, false);
++
++        return new ItemViewHolder(view);
++
++    }
++
++    @Override
++    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
++            holder.NAME.setText(namelist.get(position));
++            holder.VOLUME.setText(vollist.get(position));
++    }
++
++    @Override
++    public int getItemCount() {
++        Log.d("adaptersize", String.valueOf(namelist.size()));
++        return namelist.size();
++    }
++
++    public class ItemViewHolder extends RecyclerView.ViewHolder{
++
++          TextView NAME,VOLUME;
++        public ItemViewHolder(@NonNull View itemView) {
++            super(itemView);
++            NAME = itemView.findViewById(R.id.ingnametxt_id);
++            VOLUME = itemView.findViewById(R.id.ingvoltxt_id);
++
++        }
++    }
++
++}
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/activity_main.xml\" value=\"0.18177083333333333\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/.idea/misc.xml	(date 1648825278925)
+@@ -3,7 +3,18 @@
+   <component name="DesignSurface">
+     <option name="filePathToZoomLevelMap">
+       <map>
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/drawable/buttoncolour.xml" value="0.127" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/drawable/buttonnotselect.xml" value="0.1" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/drawable/buttonselected.xml" value="0.127" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/drawable/buttonshape.xml" value="0.1" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/activity_detailproduct.xml" value="0.2436923148431724" />
+         <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/activity_main.xml" value="0.18177083333333333" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/fragment_ingredientfragment.xml" value="0.16354166666666667" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/fragment_instruction.xml" value="0.16354166666666667" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/fragment_nutritionfragment.xml" value="0.18177083333333333" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/fragment_servingfragment.xml" value="0.1" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/ingradientitem_layout.xml" value="0.18177083333333333" />
++        <entry key="..\:/Users/Sachin/Desktop/freelancerproject/comp4200-11-recipes-app/app/src/main/res/layout/recipecard_layout.xml" value="0.10555555555555556" />
+       </map>
+     </option>
+   </component>
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"GRADLE\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"gradleHome\" value=\"$PROJECT_DIR$/../../../../../gradle/gradle-7.0.2\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/.idea/gradle.xml	(date 1648526576834)
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">RecipesApp_G11</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision 33b134e736ad4591c12b0fe2817516e405b2847a)
++++ b/app/src/main/res/values/strings.xml	(date 1648817746977)
+@@ -1,3 +1,6 @@
+ <resources>
+     <string name="app_name">RecipesApp_G11</string>
++    <string name="recipes_key">523badd0aafd4912917672ba8300ffed</string>
++    <!-- TODO: Remove or change this placeholder text -->
++    <string name="hello_blank_fragment">Hello blank fragment</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/layout/ingradientitem_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/ingradientitem_layout.xml b/app/src/main/res/layout/ingradientitem_layout.xml
+new file mode 100644
+--- /dev/null	(date 1648748630358)
++++ b/app/src/main/res/layout/ingradientitem_layout.xml	(date 1648748630358)
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="wrap_content"
++    android:layout_height="wrap_content">
++    <LinearLayout
++        android:layout_width="wrap_content"
++        android:orientation="horizontal"
++        android:layout_margin="10dp"
++        android:layout_height="wrap_content">
++        <TextView
++            android:textColor="@color/black"
++            android:textStyle="bold"
++            android:textSize="16sp"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:id="@+id/ingnametxt_id"/>
++        <TextView
++
++            android:textStyle="italic"
++            android:textSize="14sp"
++            android:layout_marginStart="10dp"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:id="@+id/ingvoltxt_id"/>
++
++    </LinearLayout>
++
++</RelativeLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/recipesapp_g11/Nutritionfragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/recipesapp_g11/Nutritionfragment.java b/app/src/main/java/com/example/recipesapp_g11/Nutritionfragment.java
+new file mode 100644
+--- /dev/null	(date 1648820272927)
++++ b/app/src/main/java/com/example/recipesapp_g11/Nutritionfragment.java	(date 1648820272927)
+@@ -0,0 +1,40 @@
++package com.example.recipesapp_g11;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.TextView;
++
++public class Nutritionfragment extends Fragment {
++
++
++
++    public Nutritionfragment() {
++        // Required empty public constructor
++    }
++
++
++
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        View v =inflater.inflate(R.layout.fragment_nutritionfragment, container, false);
++
++        TextView textView = v.findViewById(R.id.nutritiontexttext_id);
++        textView.setText(valuessaver.nutritionlist);
++
++        return v;
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_instruction.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_instruction.xml b/app/src/main/res/layout/fragment_instruction.xml
+new file mode 100644
+--- /dev/null	(date 1648822267361)
++++ b/app/src/main/res/layout/fragment_instruction.xml	(date 1648822267361)
+@@ -0,0 +1,25 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".instruction">
++    <RelativeLayout
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content">
++        <ScrollView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content">
++            <TextView
++                android:paddingBottom="80dp"
++                android:textSize="18sp"
++                android:textColor="@color/black"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_margin="20dp"
++                android:id="@+id/instructuiontxt_id"/>
++        </ScrollView>
++    </RelativeLayout>
++
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/buttonshape.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/buttonshape.xml b/app/src/main/res/drawable/buttonshape.xml
+new file mode 100644
+--- /dev/null	(date 1648825144992)
++++ b/app/src/main/res/drawable/buttonshape.xml	(date 1648825144992)
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="utf-8"?>
++
++    <shape xmlns:android="http://schemas.android.com/apk/res/android">
++        <stroke android:width="0dp" android:color="@color/white" />
++        <solid android:color="#93c572"/>
++        <padding android:left="2dp" android:top="2dp"
++            android:right="2dp" android:bottom="2dp" />
++        <corners android:radius="5dp" />
++    </shape>
++
