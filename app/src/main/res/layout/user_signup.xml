@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".UserSignup"
     android:background="#f5f5fa">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_width="203dp"
         android:layout_height="82dp"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Welcome!"
+        android:text="Sign up"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.471"
@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/sign_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Textview3">
 
@@ -89,23 +88,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="164dp"
-        android:text="sign-up"
+        android:text="sign up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/login_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="20dp"
-        android:text="login"
-        app:layout_constraintBottom_toTopOf="@+id/sign_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
