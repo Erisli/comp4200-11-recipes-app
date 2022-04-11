@@ -2527,6 +2527,7 @@ id SYM
 id TOP_END
 id TOP_START
 id TextUserName
+id Textview3
 id accelerate
 id accessibility_action_clickable_span
 id accessibility_custom_action_0
@@ -2613,8 +2614,6 @@ id bounceEnd
 id bounceStart
 id button
 id buttonPanel
-id button_login
-id button_user
 id cache_measures
 id callMeasure
 id cancel_button
@@ -2688,9 +2687,7 @@ id easeIn
 id easeInOut
 id easeOut
 id east
-id edit_password
 id edit_query
-id edit_username
 id elastic
 id end
 id endToStart
@@ -2756,9 +2753,11 @@ id line3
 id linear
 id linear1
 id linear2
+id linearLayout
 id listMode
 id list_item
 id listview
+id login_btn
 id masked
 id match_constraint
 id match_parent
@@ -2894,6 +2893,7 @@ id shortcut
 id showCustom
 id showHome
 id showTitle
+id sign_btn
 id sin
 id skipCollapsed
 id skipped
@@ -2952,8 +2952,9 @@ id textSpacerNoTitle
 id textStart
 id textTop
 id textView
-id textView1
 id textView2
+id textView5
+id textView7
 id text_input_end_icon
 id text_input_error_icon
 id text_input_start_icon
@@ -2983,6 +2984,8 @@ id unchecked
 id uniform
 id unlabeled
 id up
+id up_name
+id up_pwd
 id useLogo
 id vertical_only
 id view_offset_helper
@@ -3175,9 +3178,9 @@ layout text_view_with_line_height_from_layout
 layout text_view_with_line_height_from_style
 layout text_view_with_theme_line_height
 layout text_view_without_line_height
-layout user_login
 layout user_profile
 layout user_recipeslist
+layout user_signup
 menu example_menu
 menu example_menu2
 mipmap ic_launcher

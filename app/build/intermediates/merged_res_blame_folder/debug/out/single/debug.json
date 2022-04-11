@@ -36,10 +36,6 @@
         "source": "D:\\Desktop\\1\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.webp"
     },
     {
-        "merged": "D:\\Desktop\\1\\app\\build\\intermediates\\merged_res\\debug\\layout_user_login.xml.flat",
-        "source": "D:\\Desktop\\1\\app\\src\\main\\res\\layout\\user_login.xml"
-    },
-    {
         "merged": "D:\\Desktop\\1\\app\\build\\intermediates\\merged_res\\debug\\layout_user_profile.xml.flat",
         "source": "D:\\Desktop\\1\\app\\src\\main\\res\\layout\\user_profile.xml"
     },
@@ -54,6 +50,10 @@
     {
         "merged": "D:\\Desktop\\1\\app\\build\\intermediates\\merged_res\\debug\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
         "source": "D:\\Desktop\\1\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "D:\\Desktop\\1\\app\\build\\intermediates\\merged_res\\debug\\layout_user_signup.xml.flat",
+        "source": "D:\\Desktop\\1\\app\\src\\main\\res\\layout\\user_signup.xml"
     },
     {
         "merged": "D:\\Desktop\\1\\app\\build\\intermediates\\merged_res\\debug\\layout_features_listview.xml.flat",

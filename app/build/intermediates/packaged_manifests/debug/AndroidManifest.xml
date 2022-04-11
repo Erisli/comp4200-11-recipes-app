@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.comp4200_11_recipes_app.UserLogin"
+            android:name="com.example.comp4200_11_recipes_app.UserSignup"
             android:exported="true" >
         </activity>
         <activity
