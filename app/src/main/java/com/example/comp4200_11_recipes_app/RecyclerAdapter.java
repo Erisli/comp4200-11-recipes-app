@@ -60,7 +60,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ItemVi
         new URLImageToBitmap(holder.recipeImage).execute(recipeImages.get((holder.getAdapterPosition())));
         holder.recipeTitle.setText(recipeTitles.get(holder.getAdapterPosition()));
         holder.recipeDiet.setText(recipeDietary.get(holder.getAdapterPosition()));
-        //holder.ingredients.setText(recipeIngredients.get(holder.getAdapterPosition()));
         holder.recipeServing.setText(String.valueOf(recipeServings.get(holder.getAdapterPosition()))+" Servings");
         holder.recipeTime.setText(String.valueOf(recipePreparation.get(holder.getAdapterPosition()))+" Minutes");
         holder.recipeCard.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +90,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ItemVi
         TextView recipeTitle;
         TextView recipeDiet;
         TextView recipeTime;
-        TextView ingredients;
         TextView recipeServing;
 
         public ItemViewHolder(@NonNull View itemView) {
@@ -101,7 +99,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ItemVi
             recipeTitle=itemView.findViewById(R.id.recipeTitle);
             recipeDiet=itemView.findViewById(R.id.dietary);
             recipeTime=itemView.findViewById(R.id.time);
-            //ingredients=itemView.findViewById(R.id.ingredients);
             recipeServing=itemView.findViewById(R.id.servings);
         }
     }

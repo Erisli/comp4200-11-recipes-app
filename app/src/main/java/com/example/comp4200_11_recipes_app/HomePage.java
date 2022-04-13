@@ -31,6 +31,9 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent goto_profile = new Intent(HomePage.this, UserProfile.class);
+                Intent intent = getIntent();
+                String userName = intent.getStringExtra("userName");
+                goto_profile.putExtra("userName", userName);
                 startActivity(goto_profile);
             }
         });

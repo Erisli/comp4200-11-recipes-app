@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                         cursor.moveToFirst();
                         if (pwd.equals(cursor.getString(0))) {//when success to login here go new activity.
                             Intent goto_newpage = new Intent(MainActivity.this, HomePage.class);//newpage is new activity name
-                            goto_newpage.putExtra("username", id);
+                            goto_newpage.putExtra("userName", id);
                             startActivity(goto_newpage);
                         } else {
                             Toast.makeText(MainActivity.this, "Incorrect username or password", Toast.LENGTH_SHORT).show();

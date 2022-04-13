@@ -41,4 +41,14 @@ public class DataBaseHelp extends SQLiteOpenHelper {
         Cursor cursor = sqldata.rawQuery("SELECT pwd FROM account Where _id= ?" , new String[]{id});
         return cursor;
     }
+
+    public int changepwd(String id,String newPwd){
+        SQLiteDatabase sqldata = this.getWritableDatabase();
+        ContentValues conn = new ContentValues();
+        conn.put("_id",id);
+        conn.put("pwd",newPwd);
+
+        return sqldata.update("account", conn, "_id" + " = ?",
+                new String[] { String.valueOf(id) });
+    }
 }
