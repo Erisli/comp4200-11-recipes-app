@@ -67,8 +67,8 @@ public class RecipeList extends AppCompatActivity {
                 showFilterOptions();
             }
         });
-
-        if((new File("/data/data/com.example.recipes/files/recipeimages.dat")).exists()){
+        int callApi=1;
+        if((new File("/data/data/com.example.recipes/files/recipeimages.dat")).exists() && callApi==0){
             setRecyclerItems();
             recipeCount=recipeTitles.size();
             setRecyclerAdapter();

@@ -66,7 +66,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ItemVi
         holder.recipeCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //valuessaver.ingredients = recipeIngredients.get(holder.getAdapterPosition());
+                valuessaver.ingredients = recipeIngredients.get(holder.getAdapterPosition());
                 valuessaver.instructionlist = recipeInstructions.get(holder.getAdapterPosition());
                 //  valuessaver.ingarray  = MainActivity.ingradient.get(position);
                 valuessaver.sevinglist=  recipeServings.get(holder.getAdapterPosition()).toString();
